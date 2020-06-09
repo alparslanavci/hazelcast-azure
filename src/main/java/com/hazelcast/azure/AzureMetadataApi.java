@@ -90,6 +90,16 @@ class AzureMetadataApi {
         }
     }
 
+    boolean isAccessible() {
+        try {
+            String urlString = String.format("%s/metadata/instance?api-version=%s", endpoint, API_VERSION);
+            callGet(urlString);
+            return true;
+        } catch (RestClientException e) {
+            return false;
+        }
+    }
+
     String accessToken() {
         String urlString = String.format("%s/metadata/identity/oauth2/token?api-version=%s&resource=%s", endpoint,
                 API_VERSION, RESOURCE);

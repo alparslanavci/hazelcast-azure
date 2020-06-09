@@ -50,4 +50,14 @@ public class AzureDiscoveryStrategyFactory implements DiscoveryStrategyFactory {
         }
         return result;
     }
+
+    @Override
+    public boolean isApplicableToCurrentEnvironment() {
+        return new AzureMetadataApi().isAccessible();
+    }
+
+    @Override
+    public DiscoveryStrategyFactory.DiscoveryStrategyLevel discoveryStrategyLevel() {
+        return DiscoveryStrategyLevel.CLOUD_VM;
+    }
 }

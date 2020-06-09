@@ -31,6 +31,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static com.hazelcast.azure.AzureMetadataApi.API_VERSION;
 import static com.hazelcast.azure.AzureMetadataApi.RESOURCE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class AzureMetadataApiTest {
     private static final String ACCESS_TOKEN = "access-token-1";
@@ -51,6 +52,9 @@ public class AzureMetadataApiTest {
         azureMetadataApi = new AzureMetadataApi(String.format("http://localhost:%s", wireMockRule.port()), new HashMap<String, String>());
         //given
         stubFor(get(urlEqualTo(String.format("/metadata/instance/compute?api-version=%s", API_VERSION)))
+                .withHeader("Metadata", equalTo("true"))
+                .willReturn(aResponse().withStatus(200).withBody(metadataResponse())));
+        stubFor(get(urlEqualTo(String.format("/metadata/instance?api-version=%s", API_VERSION)))
                 .withHeader("Metadata", equalTo("true"))
                 .willReturn(aResponse().withStatus(200).withBody(metadataResponse())));
     }
@@ -107,6 +111,15 @@ public class AzureMetadataApiTest {
 
         // then
         assertEquals(SCALE_SET_NAME, result);
+    }
+
+    @Test
+    public void isAccessible() {
+        // when
+        boolean result = azureMetadataApi.isAccessible();
+
+        // then
+        assertTrue(result);
     }
 
     @Test
