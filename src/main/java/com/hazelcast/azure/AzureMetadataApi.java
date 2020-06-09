@@ -93,7 +93,12 @@ class AzureMetadataApi {
     boolean isAccessible() {
         try {
             String urlString = String.format("%s/metadata/instance?api-version=%s", endpoint, API_VERSION);
-            callGet(urlString);
+            int timeoutInSeconds = 2;
+            RestClient.create(urlString)
+                      .withHeader("Metadata", "true")
+                      .withConnectTimeoutSeconds(timeoutInSeconds)
+                      .withReadTimeoutSeconds(timeoutInSeconds)
+                      .get();
             return true;
         } catch (RestClientException e) {
             return false;
